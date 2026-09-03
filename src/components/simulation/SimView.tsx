@@ -6,6 +6,7 @@ import type { World } from '../../sim/types';
 import { createWorld } from '../../sim/world';
 import { tick } from '../../sim/engine';
 import { COPY } from '../../copy';
+import { creatureModelUrl } from '../../sim3d/creatureModel';
 import { ThreeStage } from './ThreeStage';
 import { TransportBar, type OverlayFlags, type SimSpeed } from './TransportBar';
 import { ObserverPanel } from './ObserverPanel';
@@ -70,6 +71,7 @@ export function SimView({
             overlays={overlays}
             onSelect={view.select}
             tiltRef={tiltRef}
+            modelUrls={Object.fromEntries(creatures.map((c) => [c.id, creatureModelUrl(c)]))}
           />
           {!running && <span className="sim-note">{COPY.simPaused}</span>}
         </div>

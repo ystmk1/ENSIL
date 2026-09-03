@@ -4,9 +4,9 @@ import App from './App';
 import './styles/reset.css';
 import './styles/tokens.css';
 import './styles/layout.css';
-import './styles/carousel.css';
+import './styles/chrome.css';
 import './styles/field.css';
-import './styles/archive.css';
+import './styles/record.css';
 import './styles/habitat.css';
 import './styles/landing.css';
 

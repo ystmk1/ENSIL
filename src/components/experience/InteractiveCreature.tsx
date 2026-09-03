@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { getGLTFLoader } from '../../sim3d/gltf';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { CreatureRecord } from '../../data/creatureRecords';
 
@@ -119,13 +119,14 @@ export function InteractiveCreature({ record }: { record: CreatureRecord }) {
       setReady(true);
     };
 
-    if (record.modelUrl) {
-      new GLTFLoader().load(
-        record.modelUrl,
+    const modelUrl = record.modelUrl; // 콜백 안에서도 string으로 유지
+    if (modelUrl) {
+      getGLTFLoader().then((loader) => loader.load(
+        modelUrl,
         (gltf) => fitAndAdd(gltf.scene),
         (event) => event.total && setLoading(Math.min(99, Math.round((event.loaded / event.total) * 100))),
         () => setReady(true),
-      );
+      ));
     } else {
       fitAndAdd(proxyModel(record.id));
     }

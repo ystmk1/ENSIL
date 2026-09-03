@@ -28,6 +28,26 @@
   --line-2: rgba(0, 41, 40, 0.28);
   --line-strong: rgba(0, 41, 40, 0.66);
 
+  /* 키컬러 — 유체(FluidVeil KEY_COLOR)와 같은 민트. UI에서는 '신호' 한 점에만 쓴다 */
+  --key: #58D6C3;
+
+  /* 헤어라인 — 랜딩 어바웃 오버레이의 구분선 농도가 기준. 굵은 --ink 테두리 대신 이걸 쓴다 */
+  --hairline: rgba(0, 41, 40, 0.22);
+  --hairline-strong: rgba(0, 41, 40, 0.5);
+
+  /* 크롬 좌표 — 랜딩 index-dial__identity/__utility 의 위치가 모든 화면의 기준 */
+  --chrome-top: 24px;
+  --chrome-x: 28px;
+  --chrome-row2: 60px;
+  --chrome-ink: var(--ensil-black);
+  --chrome-shadow: none;
+
+  /* 마이크로 타이포 — 랜딩 유틸리티(9px/.08em)와 노드 라벨(7px)이 기준 */
+  --fs-ui: 9px;
+  --ls-ui: .08em;
+  --fs-micro: 8px;
+  --fs-nano: 7px;
+
   /* Biotechnical signal palette */
   --lime: var(--brand-primary);
   --blue: var(--brand-secondary);

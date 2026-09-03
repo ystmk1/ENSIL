@@ -32,6 +32,8 @@ export const COPY = {
   statusLabel: '상태',
   visualPlaceholder: 'LIVE SPECIMEN / SIGNAL FEED',
   diagramPlaceholder: 'INPUT → METABOLISM → BEHAVIOR → MEMORY',
+  galleryTitle: '전자생물 아카이브',
+  galleryHint: '( 개체를 눌러 표본을 열람하세요 )',
 } as const;
 
 export const TAXON_NAME: Record<string, string> = {

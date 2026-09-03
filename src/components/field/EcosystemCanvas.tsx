@@ -13,9 +13,13 @@ type Props = {
   onSnapshot: (snapshot: HabitatSnapshot[]) => void;
   onImmersiveChange: (active: boolean) => void;
   entryRequest: number;
+  /** 외부(콘솔 창)에서 온 신호 — at 이 바뀔 때마다 해당 개체를 활성화 */
+  stimulus?: { id: string; strength: number; at: number } | null;
+  /** 스테이지 모드 — 카메라가 필드를 천천히 돌며 관람 (조작 없는 프로젝터용) */
+  ambient?: boolean;
 };
 
-export function EcosystemCanvas({ selectedId, observation, paused, onSelect, onEnter, onProximity, onSnapshot, onImmersiveChange, entryRequest }: Props) {
+export function EcosystemCanvas({ selectedId, observation, paused, onSelect, onEnter, onProximity, onSnapshot, onImmersiveChange, entryRequest, stimulus, ambient }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<HabitatWorld | null>(null);
   const callbacksRef = useRef({ onSelect, onEnter, onProximity, onSnapshot, onImmersiveChange });
@@ -29,6 +33,7 @@ export function EcosystemCanvas({ selectedId, observation, paused, onSelect, onE
       mount,
       records: CREATURE_RECORDS,
       mode: 'field',
+      ambient,
       selectedId,
       observation,
       paused,
@@ -53,6 +58,10 @@ export function EcosystemCanvas({ selectedId, observation, paused, onSelect, onE
   useEffect(() => {
     if (entryRequest > 0) worldRef.current?.enterFirstPerson();
   }, [entryRequest]);
+
+  useEffect(() => {
+    if (stimulus) worldRef.current?.activate(stimulus.id, stimulus.strength);
+  }, [stimulus]);
 
   return (
     <div className="ecosystem-canvas" ref={mountRef}>

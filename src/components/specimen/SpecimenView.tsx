@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Creature } from '../../types/creature';
 import { COPY, TAXON_NAME } from '../../copy';
 import { AnnotationLayer } from './AnnotationLayer';
+import { SpecimenModel } from './SpecimenModel';
 import { TraitGauge } from './TraitGauge';
 
 function useNarrow() {
@@ -23,9 +24,11 @@ export function SpecimenView({ creature }: { creature: Creature }) {
 
   return (
     <div className="specimen" data-species={creature.species} ref={containerRef}>
-      {/* 중앙 비주얼 */}
+      {/* 중앙 비주얼 — creature.glb 3D 뷰어 */}
       <div className="visual-wrap" ref={visualRef}>
-        <div className="visual">{COPY.visualPlaceholder}</div>
+        <div className="visual">
+          <SpecimenModel creature={creature} />
+        </div>
       </div>
 
       {/* 주석 — 컨테이너 좌표계로 그리므로 반드시 .specimen 직속 (visual-wrap 안이면 transform에 밀림) */}

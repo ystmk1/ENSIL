@@ -24,7 +24,9 @@ const LIQUID_MOTION = {
 const SYMBOL_PATH = 'M310.96,167.9V1.64h-40v73.87c0,7.82-10.27,10.73-14.37,4.06L208.78,1.69h-36.4v36.49c0,1.9-.17,3.8-.51,5.68l-.08.44c-1.27,6.62-10.15,8.1-13.52,2.25l-1.15-1.99C142.99,17.99,114.93-.18,82.92,0,37.08.26,0,37.5,0,83.4c0,30.57,16.45,57.3,40.98,71.82,4.72,2.79,5.18,9.49.82,12.82-11.64,8.89-19.12,21.42-19.12,35.91,0,22,13.39,36.67,42.84,47.9,16.31,6.19,36.27,12.15,36.27,25.67,0,9.17-7.79,16.27-17.28,16.27s-16.3-6.47-18.34-16.82c-.72-3.66-3.89-6.32-7.62-6.32H19.76s0,3.67,0,3.67c0,36.44,25.81,55.7,65,55.7,24.48,0,42.99-7.61,53.37-21.39v.16l.8-1.14c4.58-6.55,14.77-3.47,15.11,4.36v15.09h42.09v-17.54h.03s0-.05,0-.07c0-6.83,5.53-12.36,12.36-12.36s12.36,5.53,12.36,12.36c0,.03,0,.05,0,.07h0v17.05h94.89v-37.14h-40.85c-6.59,0-11.93-5.34-11.93-11.93v-96.49c0-7.25,5.88-13.13,13.13-13.13h34.85ZM48.48,54.57c6.09-12.67,19.92-18.5,34.92-18.5s28.83,5.83,34.92,18.5c2.46,5.12-1.34,11.05-7.02,11.05h-27.74s-.31,0-.31,0h-27.74c-5.68,0-9.48-5.93-7.02-11.05ZM47.44,109.38c-2.59-5.32,1.26-11.52,7.18-11.52h28.62s.32,0,.32,0h28.62c5.92,0,9.77,6.2,7.18,11.52-6.31,12.98-20.53,22.03-35.96,22.03s-29.65-9.05-35.96-22.03ZM141.9,254.02c-.98-.52-1.79-1.3-2.49-2.16-7.19-9.01-19.98-16.98-41.5-25.68-19.72-8.02-29.46-12.6-29.46-22.69,0-7.56,7.3-13.29,15.82-13.29,7.51,0,12.48,3.02,15.05,11.06,1.03,3.22,3.96,5.44,7.34,5.44h35.41s4.03,0,4.03,0h.17c4.28,0,7.76,3.47,7.76,7.76v32.62c-.3,6.24-7.03,9.67-12.14,6.95ZM154.04,167.27h0c0,3.32-.24,6.64-.71,9.92h0c-.73,5.11-5.37,7.51-9.39,6.6-2.01-.45-3.68-1.83-4.74-3.6-.2-.33-.4-.65-.6-.97,0-.01-.01-.02-.01-.03h0s0,0,0,0c-3.26-5.13-6.81-8.34-9-9.97-.13-.1-1.14-.76-2.56-1.69-4.8-3.13-4.67-10.16.2-13.17,13.24-8.2,24.02-20,30.97-34.04.26-.53.56-1.04.95-1.48,3.88-4.43,12-2.52,12.73,4.08l.39,3.79c.08.75.12,1.51.12,2.26v25.19c0,4.28-3.47,7.76-7.76,7.76h-5.24c-2.95,0-5.34,2.39-5.34,5.34ZM220.88,250.64h0s0,0,0,0c0,6.83-5.53,12.36-12.36,12.36s-12.36-5.53-12.36-12.36c0,0,0,0,0,0h-.03v-68.57c0-6.84,5.54-12.38,12.38-12.38h0c6.84,0,12.38,5.54,12.38,12.38v68.57ZM248.53,161.93h-21.53c-8.24,0-14.91-6.68-14.91-14.91v-50.85c0-9.03,11.85-12.38,16.58-4.68l31.04,50.45c5.38,8.74-.91,20-11.18,20Z';
 
 const LOGO_GEOMETRY = {
-  wordmark: { width: 10526, height: 11001, path: '', asset: '/assets/ensil-index-logo-mask.png' },
+  // 좌표계 크기 = SVG 필터 래스터 버퍼 크기. 원본 10526×11001은 필터 체인이
+  // 프레임마다 거대 버퍼를 다시 그려 커서까지 버벅였다 — 1/15로 축소 (마스크 이미지가 늘어나므로 시각 동일).
+  wordmark: { width: 701.73, height: 733.4, path: '', asset: '/assets/ensil-index-logo-mask.png' },
   symbol: { width: 315.77, height: 330, path: SYMBOL_PATH, asset: '' },
 } as const;
 
@@ -91,31 +93,56 @@ function useSpotAnimation(
       )),
     ];
 
+    // 포인터 이벤트에서는 좌표만 저장 — getScreenCTM(레이아웃 강제)은 렌더 틱에서 1회만
+    const pointerClient = { x: 0, y: 0 };
     const handlePointerMove = (event: PointerEvent) => {
-      const matrix = svg.getScreenCTM();
-      if (!matrix) return;
-      const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-      pointer.x = local.x;
-      pointer.y = local.y;
+      pointerClient.x = event.clientX;
+      pointerClient.y = event.clientY;
       hovering = true;
     };
     const handlePointerLeave = () => { hovering = false; };
 
-    const setEllipse = (ellipse: SVGEllipseElement | null, spot: typeof spots[number], radius: number, angle: string) => {
+    // rx/ry는 상수 — 최초 1회만 기록, 프레임마다는 cx/cy/rotate만 갱신
+    const setEllipseStatic = (ellipse: SVGEllipseElement | null, radius: number) => {
+      if (!ellipse) return;
+      ellipse.setAttribute('rx', radius.toFixed(3));
+      ellipse.setAttribute('ry', (radius * LIQUID_MOTION.roundness).toFixed(3));
+    };
+    spots.forEach((spot) => {
+      const radius = spot.radius * diagonal * spot.scale;
+      setEllipseStatic(spot.refs.normal, radius);
+      setEllipseStatic(spot.refs.inverse, radius);
+    });
+
+    const setEllipse = (ellipse: SVGEllipseElement | null, spot: typeof spots[number], angle: string) => {
       if (!ellipse) return;
       ellipse.setAttribute('cx', spot.x.toFixed(3));
       ellipse.setAttribute('cy', spot.y.toFixed(3));
-      ellipse.setAttribute('rx', radius.toFixed(3));
-      ellipse.setAttribute('ry', (radius * LIQUID_MOTION.roundness).toFixed(3));
       ellipse.setAttribute('transform', `rotate(${angle} ${spot.x.toFixed(3)} ${spot.y.toFixed(3)})`);
     };
 
+    // 필터 재래스터가 지배 비용 — 로고는 30fps로도 충분히 리퀴드하다
+    const FRAME_MS = 33;
+    let lastTick = 0;
+    let tickCount = 0;
     const render = (now: number) => {
       frame = window.requestAnimationFrame(render);
+      if (now - lastTick < FRAME_MS) return;
+      lastTick = now;
+      tickCount += 1;
       if (previousTime === null) previousTime = now;
-      const delta = Math.min((now - previousTime) / 1000, 0.05);
+      const delta = Math.min((now - previousTime) / 1000, 0.06);
       previousTime = now;
       const time = now / 1000;
+
+      if (hovering) {
+        const matrix = svg.getScreenCTM();
+        if (matrix) {
+          const local = new DOMPoint(pointerClient.x, pointerClient.y).matrixTransform(matrix.inverse());
+          pointer.x = local.x;
+          pointer.y = local.y;
+        }
+      }
       hoverBlend += ((hovering ? 1 : 0) - hoverBlend) * (1 - Math.exp(-3 * delta));
       const follow = 1 - Math.exp(-LIQUID_MOTION.follow * delta * 60);
       const motion = reducedMotion ? 0 : 1;
@@ -130,14 +157,14 @@ function useSpotAnimation(
         spot.x += (targetX - spot.x) * follow;
         spot.y += (targetY - spot.y) * follow;
 
-        const radius = spot.radius * diagonal * spot.scale;
         const angle = ((spot.rotationPhase + time * LIQUID_MOTION.rotationSpeed * spot.rotationDirection * motion) * 180 / Math.PI).toFixed(1);
-        setEllipse(spot.refs.normal, spot, radius, angle);
-        setEllipse(spot.refs.inverse, spot, radius, angle);
+        setEllipse(spot.refs.normal, spot, angle);
+        setEllipse(spot.refs.inverse, spot, angle);
       });
 
+      // 디스플레이스먼트 강도는 900ms 주기 사인 — 5Hz 갱신이면 충분 (필터 무효화 최소화)
       const displacement = displacementRef.current;
-      if (displacement) {
+      if (displacement && tickCount % 6 === 0) {
         const wobble = reducedMotion
           ? 0
           : LIQUID_MOTION.wobble * diagonal * (0.75 + 0.25 * Math.sin(now / 900));

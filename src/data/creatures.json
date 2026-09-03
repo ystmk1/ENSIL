@@ -8,7 +8,7 @@
     "registeredAt": "2026-01-01",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/mcu.glb",
       "thumb": "",
       "shape": "circle"
     },
@@ -82,7 +82,7 @@
     "registeredAt": "2026-01-01",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/led.glb",
       "thumb": "",
       "shape": "circle"
     },
@@ -152,7 +152,7 @@
     "registeredAt": "2026-01-05",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/transistor.glb",
       "thumb": "",
       "shape": "square"
     },
@@ -226,7 +226,7 @@
     "registeredAt": "2026-01-05",
     "status": "휴면",
     "visual": {
-      "main": "",
+      "main": "models/capacitor.glb",
       "thumb": "",
       "shape": "square"
     },
@@ -286,7 +286,7 @@
     "registeredAt": "2026-01-10",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/switch.glb",
       "thumb": "",
       "shape": "triangle"
     },
@@ -356,7 +356,7 @@
     "registeredAt": "2026-01-12",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/resistor.glb",
       "thumb": "",
       "shape": "triangle"
     },
@@ -416,7 +416,7 @@
     "registeredAt": "2026-01-15",
     "status": "소실",
     "visual": {
-      "main": "",
+      "main": "models/led.glb",
       "thumb": "",
       "shape": "circle"
     },
@@ -476,7 +476,7 @@
     "registeredAt": "2026-01-20",
     "status": "관찰 중",
     "visual": {
-      "main": "",
+      "main": "models/mcu.glb",
       "thumb": "",
       "shape": "square"
     },

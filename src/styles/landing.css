@@ -104,12 +104,20 @@
   filter: url(#ensil-interface-duotone);
 }
 
-.index-frame-bg > video {
+.index-frame-bg {
+  /* 트라이톤 팔레트의 최암부 — 비디오 프레임이 뜨기 전에도 같은 톤 유지 */
+  background: #002928;
+}
+.index-frame-bg > video.index-frame-bg__video {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
+  inset: -2.5%;
+  width: 105%;
+  height: 105%;
+  object-fit: cover;
+  opacity: .98;
   pointer-events: none;
+  filter: url(#ensil-tritone);
+  will-change: transform;
 }
 
 .index-frame-bg__canvas {
@@ -234,42 +242,7 @@
   100% { transform: translate3d(1.8%, -2%, 0) scale(1.04, 1.1); }
 }
 
-.index-dial__identity,
-.index-dial__utility {
-  position: absolute;
-  top: 24px;
-  z-index: 20;
-  color: #FFFFFF;
-  text-shadow: 0 1px 10px rgba(0, 41, 40, .18);
-}
-
-.index-dial__identity { left: 28px; }
-.index-dial__identity strong {
-  font-size: 18px;
-  letter-spacing: -.04em;
-  line-height: 1;
-}
-
-.index-dial__utility {
-  right: 28px;
-  display: flex;
-  gap: 24px;
-  font-size: 9px;
-  letter-spacing: .08em;
-  pointer-events: auto;
-}
-
-.index-dial__utility button,
-.index-dial__utility a {
-  padding: 0 0 3px;
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  color: inherit;
-  background: transparent;
-  font: inherit;
-  letter-spacing: inherit;
-  cursor: pointer;
-}
+/* .index-dial__identity / __utility 스타일은 chrome.css (사이트 공통 크롬)에서 관리 */
 
 .index-dial__hub {
   position: absolute;
@@ -278,10 +251,11 @@
   z-index: 3;
   width: var(--hub-size);
   aspect-ratio: 1;
-  overflow: hidden;
+  /* 솔리드 원판 제거 — 허브는 FluidHub 유체 덩어리 자체다 (경계는 시뮬레이션이 만든다) */
+  overflow: visible;
   border: 0;
   border-radius: 50%;
-  background: #FFFFFF;
+  background: transparent;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-mask-image: none;
@@ -322,10 +296,11 @@
   animation: pointerFluidRotation 28s linear infinite;
 }
 
-.index-dial__pointer-effect .index-dial__hub-texture canvas {
+.index-dial__pointer-effect .index-dial__hub-texture canvas,
+.index-dial__pointer-effect .index-dial__hub-texture video.hub-texture__video {
   opacity: .96;
-  mix-blend-mode: normal;
-  filter: contrast(1.3);
+  mix-blend-mode: screen;
+  filter: grayscale(1) brightness(1.1) contrast(1.7);
 }
 
 @keyframes pointerFluidRotation {
@@ -428,11 +403,16 @@
   pointer-events: none;
 }
 
-.index-dial__hub-texture video {
+.index-dial__hub-texture video.hub-texture__video {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .9;
+  /* 밝은 곳=흰색, 어두운 곳=투명 — 이전 픽셀 루프와 같은 룩을 블렌드로 */
+  mix-blend-mode: screen;
+  filter: grayscale(1) brightness(1.1) contrast(1.55);
 }
 
 .index-dial__hub-texture canvas {
@@ -623,12 +603,11 @@
     --node-size: clamp(74px, 24vw, 102px);
     --hub-size: min(68vw, 44vh);
   }
-  .index-dial__identity { top: 18px; left: 16px; }
-  .index-dial__utility { top: 18px; right: 16px; gap: 14px; font-size: 8px; }
   .index-dial__node.is-active { --node-scale: 2.02; }
   .index-dial__node.is-active:hover,
   .index-dial__node.is-active:focus-visible { --node-scale: 2.12; }
-  .index-frame-bg__canvas { inset: -4% -18%; width: 136%; height: 108%; }
+  .index-frame-bg__canvas,
+  .index-frame-bg > video.index-frame-bg__video { inset: -4% -18%; width: 136%; height: 108%; }
   .index-about { padding: 18px 16px; }
   .index-about__lead,
   .index-about__body { grid-template-columns: 1fr; gap: 18px; }
@@ -651,3 +630,126 @@
   .biotech-glass i { animation: none; }
   .index-about { animation: none; }
 }
+
+/* ── Vitrine landing — 전시 진열장 렌더 ─────────────────────── */
+.landing-page--vitrine {
+  background: #35373a;
+  min-height: 0;
+}
+.vitrine-stage { position: absolute; inset: 0; }
+.vitrine-stage canvas { display: block; }
+.vitrine-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #f4f9ff;
+  opacity: 0;
+  pointer-events: none;
+}
+.vitrine-caption {
+  position: absolute;
+  left: 26px;
+  bottom: 24px;
+  z-index: 3;
+  color: #55585a; /* 하단은 밝은 바닥 위 */
+  pointer-events: none;
+}
+.vitrine-caption span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  opacity: 0.72;
+}
+.vitrine-caption p { margin-top: 8px; font-size: 12px; }
+.vitrine-links {
+  position: absolute;
+  right: 26px;
+  bottom: 24px;
+  z-index: 3;
+  display: flex;
+  gap: 26px;
+}
+.vitrine-links a {
+  color: #55585a;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.vitrine-links a:hover { opacity: 1; text-decoration: underline; }
+
+/* ── 액체 커서 + 전면 유체 베일 (사이트 전역) ───────────────── */
+@media (pointer: fine) {
+  .site-shell,
+  .site-shell * { cursor: none !important; }
+}
+
+.liquid-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.liquid-cursor__goo {
+  position: absolute;
+  inset: 0;
+  filter: url(#ensil-goo) drop-shadow(0 0 1px rgba(0, 41, 40, 0.45));
+}
+.liquid-cursor__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 50%;
+  background: #d9d9d9;
+  will-change: transform;
+}
+
+/* 허브(회전축) 유체 — 베일과 같은 흑백 difference. 덩어리 일렁임이 잘리지 않게 여유 영역.
+   넓은 방사 페이드 마스크로 캔버스 사각 경계를 지운다 (52→74% 그라데이션 — 원 경계로 안 읽힘) */
+.fluid-hub {
+  position: absolute;
+  inset: -35%;
+  width: 170%;
+  height: 170%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 56%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, black 56%, transparent 70%);
+}
+
+/* 전면 유체 베일 — difference라 어느 면 위에서든 모노톤 반전으로 읽힌다 */
+.fluid-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+/* 색상 통일 레이어(랜딩 전용) — hue 블렌드: 명도·채도 유지, 색상만 브랜드 틸로 정렬.
+   difference 반전의 붉은 기 제거 + 허브·포인터·배경 톤 일치 */
+.site-tone {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  pointer-events: none;
+  background: #2f8f80;
+  mix-blend-mode: hue;
+}
+
+/* 민트 글레이즈 — difference 결과의 명암은 두고 색만 키컬러로 바꾼다 */
+.fluid-veil-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 121;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: color;
+  opacity: 0.9;
+}
+

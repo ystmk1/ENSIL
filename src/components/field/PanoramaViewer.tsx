@@ -5,6 +5,8 @@ import { CREATURE_RECORDS } from '../../data/creatureRecords';
 
 type Props = {
   paused: boolean;
+  /** 스테이지(프로젝터)에서 돌아온 개체 상태 — 있으면 핫스팟 라벨에 표시 */
+  states?: Record<string, string>;
   onSelect: (id: string) => void;
   onProximity: (id: string | null) => void;
   onModeChange?: (mode: 'loading' | 'limited' | '360' | 'error') => void;
@@ -21,7 +23,7 @@ const HOTSPOTS: HotspotPosition[] = [
 
 const PANORAMA_URL = '/panoramas/ensil-field-biome.png';
 
-export function PanoramaViewer({ paused, onSelect, onProximity, onModeChange }: Props) {
+export function PanoramaViewer({ paused, states, onSelect, onProximity, onModeChange }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const hotspotRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const callbacksRef = useRef({ onSelect, onProximity, onModeChange });
@@ -204,8 +206,10 @@ export function PanoramaViewer({ paused, onSelect, onProximity, onModeChange }: 
         if (visible) {
           const rawX = 50 + (deltaYaw / (horizontalFov / 2)) * 50;
           const y = 50 - (deltaPitch / (verticalFov / 2)) * 50;
-          const leftMargin = (10 / Math.max(mount.clientWidth, 1)) * 100;
-          const rightLimit = 100 - ((element.offsetWidth + 10) / Math.max(mount.clientWidth, 1)) * 100;
+          // 핫스팟은 가로 중앙 정렬(translateX(-50%))이라 절반 폭 + 여백만큼 안쪽으로 클램프
+          const halfWidth = element.offsetWidth / 2 + 10;
+          const leftMargin = (halfWidth / Math.max(mount.clientWidth, 1)) * 100;
+          const rightLimit = 100 - leftMargin;
           const x = THREE.MathUtils.clamp(rawX, leftMargin, Math.max(leftMargin, rightLimit));
           element.style.setProperty('--hotspot-x', `${x}%`);
           element.style.setProperty('--hotspot-y', `${y}%`);
@@ -306,8 +310,12 @@ export function PanoramaViewer({ paused, onSelect, onProximity, onModeChange }: 
             aria-label={`Observe ${record.name}, ${record.sensor}`}
             key={record.id}
           >
-            <i aria-hidden />
-            <span><b>{record.code}</b><small>{record.sensor}<br />{HOTSPOTS[index].distance.toFixed(1)}M / SIGNAL</small></span>
+            <i aria-hidden><b>{record.code}</b></i>
+            <span>
+              <small>{record.sensor}</small>
+              <small>{HOTSPOTS[index].distance.toFixed(1)}M / SIGNAL</small>
+              {states?.[record.id] && <small className="panorama-hotspot__stage">STAGE / {states[record.id]}</small>}
+            </span>
           </button>
         ))}
       </div>

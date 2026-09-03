@@ -1,0 +1,159 @@
+/* 개체 기록(#/creature/:id) — 스크롤 가능한 유일한 화면. 아카이브 워크스테이션은 인덱스 다이얼로 통합돼 삭제됨 */
+.record-page {
+  min-height: 100dvh;
+  background: var(--paper-bright);
+}
+
+/* Creature record */
+.record-hero {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ink);
+  background: var(--brand-white);
+}
+
+.record-meta-rail {
+  position: absolute;
+  top: var(--chrome-row2);
+  right: var(--chrome-x);
+  left: var(--chrome-x);
+  z-index: 7;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.record-title {
+  position: absolute;
+  top: 13vh;
+  left: 3vw;
+  z-index: 6;
+  max-width: 78vw;
+  pointer-events: none;
+}
+.record-title > span { font-size: 8px; letter-spacing: 0.1em; }
+.record-title h1 {
+  margin-top: 10px;
+  font-size: clamp(72px, 11vw, 220px);
+  font-weight: 400;
+  letter-spacing: -0.08em;
+  line-height: 0.78;
+}
+
+.record-viewer {
+  position: absolute;
+  inset: 0;
+}
+
+.record-viewer__canvas { position: absolute; inset: 0; z-index: 2; }
+.record-viewer__canvas canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.record-viewer__canvas canvas:active { cursor: grabbing; }
+.record-viewer__loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 8;
+  display: flex;
+  gap: 30px;
+  transform: translate(-50%, -50%);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+}
+.record-viewer__pending { position: absolute; right: var(--chrome-x); bottom: 70px; z-index: 5; font-size: var(--fs-micro); letter-spacing: 0.08em; opacity: .6; }
+/* 모델 컨트롤 — 랜딩 유틸리티 룩: 밑줄 텍스트. 토글 OFF는 밑줄 없이 가라앉힘 */
+.record-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  z-index: 8;
+  display: flex;
+  gap: 22px;
+  transform: translateX(-50%);
+}
+.record-controls button { padding: 0 0 3px; border-bottom: 1px solid currentColor; font-size: var(--fs-ui); letter-spacing: var(--ls-ui); transition: opacity var(--motion-fast) ease, border-color var(--motion-fast) ease; }
+.record-controls button[aria-pressed='false'] { border-bottom-color: transparent; opacity: .5; }
+.record-controls button:hover { opacity: .75; }
+.record-viewer__instruction { position: absolute; bottom: 24px; left: var(--chrome-x); z-index: 6; font-size: var(--fs-nano); letter-spacing: 0.07em; opacity: .7; }
+.record-return { position: absolute; right: var(--chrome-x); bottom: 24px; z-index: 9; padding-bottom: 3px; border-bottom: 1px solid currentColor; font-size: var(--fs-ui); letter-spacing: var(--ls-ui); }
+.record-return:hover { opacity: .6; }
+
+.anatomy-labels span { position: absolute; z-index: 6; padding: 4px 6px; background: var(--paper-bright); font-size: var(--fs-nano); letter-spacing: 0.08em; }
+.anatomy-labels span::after { content: ''; position: absolute; top: 50%; width: 7vw; border-top: 1px solid var(--hairline-strong); }
+.anatomy-labels__a { top: 34%; left: 13%; }
+.anatomy-labels__a::after { left: 100%; }
+.anatomy-labels__b { top: 49%; right: 12%; }
+.anatomy-labels__b::after { right: 100%; }
+.anatomy-labels__c { top: 70%; left: 17%; }
+.anatomy-labels__c::after { left: 100%; }
+
+.response-diagram {
+  min-height: 72dvh;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-content: center;
+  padding: 12vh 3vw;
+  border-bottom: 1px solid var(--ink);
+}
+.response-diagram > p { padding-top: 7px; font-size: 8px; letter-spacing: 0.09em; }
+.response-diagram__flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 2vw; }
+.response-diagram__flow div { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--hairline, rgba(17, 17, 17, 0.14)); }
+.response-diagram__flow span { color: var(--ink-mute); font-size: 8px; letter-spacing: 0.09em; }
+.response-diagram__flow strong { max-width: 250px; font-size: clamp(22px, 2.5vw, 46px); font-weight: 400; letter-spacing: -0.045em; line-height: 0.95; }
+.response-diagram__flow i { font-size: 22px; font-style: normal; }
+
+.record-ecology { min-height: 105dvh; padding: 14vh 3vw; border-bottom: 1px solid var(--ink); }
+.record-ecology header { display: grid; grid-template-columns: 1fr 3fr; margin-bottom: 12vh; }
+.record-ecology header p { font-size: 8px; letter-spacing: 0.09em; }
+.record-ecology h2 { font-size: clamp(54px, 7.6vw, 145px); font-weight: 400; letter-spacing: -0.075em; line-height: 0.8; }
+.record-ecology dl { display: grid; grid-template-columns: repeat(4, 1fr); margin-left: 25%; border-top: 1px solid var(--ink); }
+.record-ecology dl div { min-height: 220px; padding: 12px 16px 16px 0; border-right: 1px solid var(--hairline, rgba(17, 17, 17, 0.14)); }
+.record-ecology dt { color: var(--ink-mute); font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
+.record-ecology dd { margin-top: 70px; max-width: 240px; font-size: clamp(15px, 1.25vw, 23px); letter-spacing: -0.025em; }
+
+.record-observations { min-height: 78dvh; padding: 12vh 3vw; }
+.record-observations header { display: flex; justify-content: space-between; margin-bottom: 8vh; padding-bottom: 9px; border-bottom: 1px solid var(--ink); font-size: 8px; letter-spacing: 0.09em; }
+.record-observations ol { width: 72%; margin-left: auto; }
+.record-observations li { display: grid; grid-template-columns: 110px 120px 1fr; gap: 20px; padding: 15px 0; border-bottom: 1px solid var(--hairline, rgba(17, 17, 17, 0.14)); }
+.record-observations time,
+.record-observations strong { color: var(--ink-mute); font-size: 9px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; }
+.record-observations p { font-size: clamp(16px, 1.4vw, 25px); letter-spacing: -0.025em; }
+
+.record-pagination { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
+.record-pagination a { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; padding: 14px 18px; border-right: 1px solid var(--ink); }
+.record-pagination a:last-child { border-right: 0; text-align: right; }
+.record-pagination a:nth-child(2) { text-align: center; }
+.record-pagination span { color: var(--ink-mute); font-size: 8px; letter-spacing: 0.09em; }
+.record-pagination strong { font-size: clamp(18px, 2vw, 35px); font-weight: 400; letter-spacing: -0.04em; }
+.record-pagination a:hover { color: var(--paper-bright); background: var(--ink); }
+.record-pagination a:hover span { color: inherit; }
+
+@media (max-width: 800px) {
+  .record-title { top: 105px; left: 16px; max-width: calc(100vw - 32px); }
+  .record-title h1 { font-size: clamp(62px, 17vw, 110px); }
+  .record-meta-rail { top: 55px; right: 12px; left: 12px; }
+  .record-meta-rail span:nth-child(2) { display: none; }
+  .record-controls { right: 10px; bottom: 48px; left: 10px; justify-content: space-between; gap: 10px; transform: none; }
+  .record-viewer__instruction { bottom: 22px; left: 10px; font-size: 6px; }
+  .record-viewer__pending { right: 12px; bottom: 92px; }
+  .record-return { top: 86px; right: 12px; bottom: auto; }
+  .anatomy-labels span::after { width: 30px; }
+  .response-diagram { min-height: 720px; grid-template-columns: 1fr; gap: 70px; padding: 100px 16px; }
+  .response-diagram__flow { grid-template-columns: 1fr; gap: 10px; }
+  .response-diagram__flow i { transform: rotate(90deg); justify-self: center; }
+  .response-diagram__flow div { min-height: 100px; }
+  .record-ecology { padding: 100px 16px; }
+  .record-ecology header { grid-template-columns: 1fr; gap: 50px; }
+  .record-ecology h2 { font-size: clamp(52px, 14vw, 86px); }
+  .record-ecology dl { grid-template-columns: 1fr; margin-left: 0; }
+  .record-ecology dl div { min-height: 170px; border-right: 0; border-bottom: 1px solid var(--hairline, rgba(17, 17, 17, 0.14)); }
+  .record-ecology dd { margin-top: 48px; }
+  .record-observations { padding: 100px 16px; }
+  .record-observations ol { width: 100%; }
+  .record-observations li { grid-template-columns: 80px 1fr; }
+  .record-observations li p { grid-column: 1 / -1; }
+  .record-pagination { grid-template-columns: 1fr; }
+  .record-pagination a { min-height: 120px; border-right: 0; border-bottom: 1px solid var(--ink); text-align: left !important; }
+}

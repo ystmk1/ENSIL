@@ -67,7 +67,7 @@ export function CreatureRecordPage({ id }: { id: string }) {
 
       <nav className="record-pagination" aria-label="Creature records">
         <a href={`#/creature/${previous.id}`}><span>← PREVIOUS</span><strong>{previous.name}</strong></a>
-        <a href="#/archive"><span>INDEX</span><strong>ALL FOUR RECORDS</strong></a>
+        <a href="#/"><span>ARCHIVE</span><strong>ALL FOUR RECORDS</strong></a>
         <a href={`#/creature/${next.id}`}><span>NEXT →</span><strong>{next.name}</strong></a>
       </nav>
     </main>

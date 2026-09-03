@@ -10,10 +10,15 @@ export interface ViewState {
   selectedIndex: number; // -1 = 미선택
   mode: ViewMode;
   aboutOpen: boolean;
+  /** 메인(갤러리) 화면 여부 — #/gallery */
+  gallery: boolean;
+  /** N초 무입력 시 갤러리 복귀 (전시 옵션 ?idle=N, null = 비활성) */
+  idle: number | null;
   select: (id: string | null) => void;
   step: (dir: 1 | -1) => void;
   setMode: (mode: ViewMode) => void;
   setAbout: (open: boolean) => void;
+  toGallery: () => void;
 }
 
 /**
@@ -22,7 +27,7 @@ export interface ViewState {
  * URL이 곧 상태: #/c/:id, ?mode=sim, ?about=1
  */
 export function useViewState(creatures: Creature[]): ViewState {
-  const { id, mode, about: aboutOpen, navigate } = useHashRoute();
+  const { id, mode, about: aboutOpen, gallery, idle, navigate, toGallery } = useHashRoute();
 
   const selectedIndex = useMemo(
     () => creatures.findIndex((c) => c.id === id),
@@ -58,7 +63,9 @@ export function useViewState(creatures: Creature[]): ViewState {
   );
 
   // 키보드 = MockInput (plan.md §7-3). 하드웨어가 없어도 전 인터랙션 재현 + 현장 비상 조작.
+  // 갤러리 화면에서는 비활성 — 두 모니터 운용 시 갤러리 창이 아카이브로 넘어가면 안 된다.
   useEffect(() => {
+    if (gallery) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') step(1);
       else if (e.key === 'ArrowLeft') step(-1);
@@ -72,7 +79,7 @@ export function useViewState(creatures: Creature[]): ViewState {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [step, select, setAbout, aboutOpen, creatures]);
+  }, [step, select, setAbout, aboutOpen, creatures, gallery]);
 
-  return { selectedId: selected?.id ?? null, selected, selectedIndex, mode, aboutOpen, select, step, setMode, setAbout };
+  return { selectedId: selected?.id ?? null, selected, selectedIndex, mode, aboutOpen, gallery, idle, select, step, setMode, setAbout, toGallery };
 }

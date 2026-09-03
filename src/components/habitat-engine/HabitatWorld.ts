@@ -1,6 +1,8 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// GLB는 압축(EXT_meshopt_compression)돼 있으므로 meshopt 디코더가 연결된
+// 공용 로더(sim3d/gltf.ts)로 로드한다. 디코더 정적 import는 wasm-rollup 크래시(debug.md #1).
+import { getGLTFLoader } from '../../sim3d/gltf';
 import type { CreatureRecord, CreatureState } from '../../data/creatureRecords';
 import { FirstPersonFieldController } from '../field/FirstPersonFieldController';
 import { getBiomeConfig } from './biomes';
@@ -18,6 +20,8 @@ export type HabitatWorldOptions = {
   mount: HTMLElement;
   records: CreatureRecord[];
   mode: 'field' | 'single';
+  /** 스테이지(프로젝터) — 1인칭 진입이 없을 때 카메라가 필드 중심을 천천히 돈다 */
+  ambient?: boolean;
   selectedId?: string | null;
   observation?: boolean;
   paused?: boolean;
@@ -359,7 +363,7 @@ export class HabitatWorld {
   private loadFieldReferenceLandscape() {
     this.renderer.domElement.dataset.habitatModel = 'LOADING';
     this.renderer.domElement.dataset.habitatError = 'false';
-    new GLTFLoader().load(
+    getGLTFLoader().then((loader) => loader.load(
       '/models/ensil-green-circuit-ruins.glb',
       (gltf) => {
         if (this.disposed) {
@@ -448,7 +452,7 @@ export class HabitatWorld {
         this.renderer.domElement.dataset.habitatError = 'true';
         console.warn('ENSIL habitat GLB could not be loaded; using procedural fallback.', error);
       },
-    );
+    ));
   }
 
   private raiseEcologiesToReferenceSurface(model: THREE.Object3D) {
@@ -472,8 +476,9 @@ export class HabitatWorld {
       this.completeLoad(runtime);
       return;
     }
-    new GLTFLoader().load(
-      runtime.record.modelUrl,
+    const modelUrl = runtime.record.modelUrl;
+    getGLTFLoader().then((loader) => loader.load(
+      modelUrl,
       (gltf) => {
         if (this.disposed) {
           this.disposeObject(gltf.scene);
@@ -509,7 +514,7 @@ export class HabitatWorld {
       },
       undefined,
       () => this.completeLoad(runtime),
-    );
+    ));
   }
 
   private completeLoad(runtime: HabitatRuntime) {
@@ -878,6 +883,14 @@ export class HabitatWorld {
 
     if (this.options.mode === 'field') {
       this.fieldController?.update(dt);
+      if (this.options.ambient && !this.fieldController?.isActive && !this.reducedMotion) {
+        // 약 3분에 한 바퀴 — 정지 화면처럼 보이지 않을 만큼만
+        const angle = now * 0.000035;
+        const x = Math.sin(angle) * 27;
+        const z = Math.cos(angle) * 27;
+        this.camera.position.set(x, commonFieldHeight(x, z) + 3.2, z);
+        this.camera.lookAt(0, 1.5, 0);
+      }
       if (this.fieldController?.isActive) {
         const focused = this.inspectViewTarget();
         if (focused !== this.hoveredId) {

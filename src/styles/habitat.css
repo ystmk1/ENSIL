@@ -1,3 +1,4 @@
+/* 서식지 — 흰 바탕 위 딥틸 크롬, 상자·그림자 없는 헤어라인 표와 밑줄 액션 */
 .habitat-page {
   --habitat-primary: var(--brand-primary);
   --habitat-secondary: var(--brand-secondary);
@@ -13,106 +14,90 @@
     linear-gradient(118deg, var(--brand-white) 0 71%, color-mix(in srgb, var(--habitat-primary), var(--brand-white) 64%) 71% 100%);
 }
 
-.habitat-scene { position: absolute; inset: 48px 0 0; z-index: 2; }
-.habitat-scene canvas { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.habitat-scene { position: absolute; inset: 0; z-index: 2; }
+.habitat-scene canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .habitat-scene__loading {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 8;
-  padding: 8px 10px;
   transform: translate(-50%, -50%);
-  color: var(--habitat-paper);
-  background: var(--habitat-ink);
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  font-size: var(--fs-micro);
+  letter-spacing: .1em;
 }
 
 .habitat-meta {
   position: absolute;
-  top: 64px;
-  right: 24px;
-  left: 24px;
+  top: var(--chrome-row2);
+  right: var(--chrome-x);
+  left: var(--chrome-x);
   z-index: 7;
   display: flex;
   justify-content: space-between;
-  padding-top: 7px;
-  border-top: 1px solid currentColor;
-  font-size: 8px;
-  letter-spacing: 0.09em;
+  font-size: var(--fs-micro);
+  letter-spacing: .09em;
+  pointer-events: none;
 }
 
 .habitat-title {
   position: absolute;
-  bottom: 56px;
-  left: 24px;
+  bottom: 48px;
+  left: var(--chrome-x);
   z-index: 7;
   max-width: 72vw;
   pointer-events: none;
 }
-.habitat-title > span { font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; }
+.habitat-title > span { font-size: var(--fs-micro); letter-spacing: .1em; text-transform: uppercase; }
 .habitat-title h1 {
   margin-top: 6px;
-  font-family: Helvetica, 'Helvetica Neue', Arial, sans-serif;
   font-size: clamp(78px, 11.5vw, 220px);
   font-weight: 400;
-  letter-spacing: -0.08em;
-  line-height: 0.72;
-  text-shadow: none;
+  letter-spacing: -.08em;
+  line-height: .72;
 }
 
 .habitat-signal {
   position: absolute;
-  top: 112px;
-  right: 24px;
+  top: calc(var(--chrome-row2) + 28px);
+  right: var(--chrome-x);
   z-index: 7;
   width: min(250px, 26vw);
   display: grid;
   grid-template-columns: 64px 1fr;
   gap: 0 12px;
-  color: var(--habitat-paper);
-  background: var(--habitat-ink);
-  box-shadow: 7px 7px 0 var(--habitat-accent);
+  border-top: 1px solid var(--hairline-strong);
 }
 .habitat-signal span,
-.habitat-signal strong { padding: 9px; border-bottom: 1px solid color-mix(in srgb, var(--habitat-paper), transparent 72%); }
-.habitat-signal span { font-size: 7px; letter-spacing: 0.08em; }
+.habitat-signal strong { padding: 8px 0; border-bottom: 1px solid var(--hairline); }
+.habitat-signal span { font-size: var(--fs-nano); letter-spacing: .08em; opacity: .6; }
 .habitat-signal strong { font-size: 9px; font-weight: 400; line-height: 1.2; }
 
 .habitat-actions {
   position: absolute;
-  right: 24px;
+  right: var(--chrome-x);
   bottom: 24px;
   z-index: 8;
   display: flex;
-  border-top: 1px solid currentColor;
-  border-bottom: 1px solid currentColor;
-  background: color-mix(in srgb, var(--habitat-paper), transparent 14%);
+  gap: 24px;
 }
-.habitat-actions a { padding: 9px 12px; border-right: 1px solid currentColor; font-size: 8px; letter-spacing: 0.08em; }
-.habitat-actions a:last-child { border-right: 0; }
-.habitat-actions a:hover { color: var(--habitat-paper); background: var(--habitat-ink); }
+.habitat-actions a { padding: 0 0 3px; border-bottom: 1px solid currentColor; font-size: var(--fs-ui); letter-spacing: var(--ls-ui); transition: opacity var(--motion-fast) ease; }
+.habitat-actions a:hover { opacity: .6; }
 
 .habitat-instruction {
   position: absolute;
-  right: 24px;
-  bottom: 72px;
+  right: var(--chrome-x);
+  bottom: 56px;
   z-index: 7;
-  font-size: 7px;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-nano);
+  letter-spacing: .08em;
+  opacity: .7;
 }
 
 @media (max-width: 760px) {
-  .habitat-meta { top: 57px; right: 12px; left: 12px; }
   .habitat-meta span:last-child { display: none; }
-  .habitat-title { bottom: 118px; left: 12px; max-width: calc(100vw - 24px); }
-  .habitat-title h1 { font-size: clamp(64px, 19vw, 112px); text-shadow: none; }
-  .habitat-signal { top: 86px; right: 12px; width: min(228px, calc(100vw - 24px)); }
-  .habitat-actions { right: 12px; bottom: 12px; left: 12px; }
-  .habitat-actions a { flex: 1; text-align: center; }
-  .habitat-instruction { right: 12px; bottom: 55px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .habitat-scene canvas { scroll-behavior: auto; }
+  .habitat-title { bottom: 118px; max-width: calc(100vw - 2 * var(--chrome-x)); }
+  .habitat-title h1 { font-size: clamp(64px, 19vw, 112px); }
+  .habitat-signal { width: min(228px, calc(100vw - 2 * var(--chrome-x))); }
+  .habitat-actions { right: var(--chrome-x); bottom: 16px; left: var(--chrome-x); justify-content: space-between; }
+  .habitat-instruction { bottom: 52px; }
 }
